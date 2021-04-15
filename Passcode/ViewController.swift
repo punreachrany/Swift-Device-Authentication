@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var biometricButton: UIButton!
     @IBOutlet weak var resultLabel: UILabel!
     
+    var authResult: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,13 +33,16 @@ class ViewController: UIViewController {
             self.resultLabel.text = "Passcode Authentication result \(result)"
             
         } else if authenticationType == "Biometric" {
-//            result = String(biometricAuthentication())
-//            self.resultLabel.text = "Biometric Authentication result \(result)"
-            self.resultLabel.text = "분석 중입니다."
+            print(String(authResult))
+            
+            biometricAuthentication(authCompletion)
+            print(String(authResult))
             
         } else {
             self.resultLabel.text = "Unknown Button"
         }
+        
+//        print("Finish")
     }
     
     // Passcode Authentication
@@ -85,37 +89,45 @@ class ViewController: UIViewController {
         }
     }
     
-//    // Biometric Authentication
-//    func biometricAuthentication() -> Bool {
-//
-//        let context = LAContext()
-//        let reason = "Biometric Authntication testing !!"
-//        //        var authError: NSError?
-//        //        var result : Bool = false
-//
-//        context.evaluatePolicy(LAPolicy.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { (success, error) in
-//
-//            DispatchQueue.main.async {
-//
-//
-//                if success {
-//
-//                    print("Success")
-//
-//                }else{
-//                    print("Failed")
-//                    return
-//                }
-//
-//            }
-//
-//        }
-//
-//        return true
-//    }
+    // Biometric Authentication
+    func biometricAuthentication(_ completion: @escaping (Bool) -> Void) {
+        
+        let context = LAContext()
+        let reason = "Biometric Authntication testing !!"
+        var error : NSError?
+        
+        // Remove Enter passcode button
+        context.localizedFallbackTitle = ""
+        //        var authError: NSError?
+        //        var result : Bool = false
+        
+        if context.canEvaluatePolicy(LAPolicy.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            context.evaluatePolicy(LAPolicy.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { (success, biometricError) in
+                DispatchQueue.main.async { [unowned self] in
+                    self.authResult =  success
+                    if success {
+                        completion(true)
+                        
+                    }else{
+                        print("error: \(String(describing: biometricError))")
+                        completion(false)
+                        return
+                    }
+                }
+                
+            }
+        }else {
+            print(String(describing: error))
+        }
+        
+        
+    }
     
+    func authCompletion(result : Bool) {
+        self.authResult = result
+        self.resultLabel.text = "Biometric Authentication result \(String(self.authResult))"
+        
+    }
     
-    
-
 }
 
