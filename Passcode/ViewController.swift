@@ -10,143 +10,44 @@ import LocalAuthentication
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var userButton: UIButton!
-    
+    @IBOutlet weak var passcodeButton: UIButton!
+    @IBOutlet weak var biometricButton: UIButton!
     @IBOutlet weak var resultLabel: UILabel!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
     
-    @IBAction func buttonPressed(_ sender: UIButton) {
-        //        authenticateUser()
-        //        var result: Bool
+    // Authentication Buttons Action Function
+    @IBAction func authenticationPressed(_ sender: UIButton) {
         
-        let result = stackOverflowKeychain()
-
-        if result {
-            self.resultLabel.text = "Passcode Success"
-            print("Success")
-            return
-        }else{
-            self.resultLabel.text = "Passcode Failed"
-            print("Failed")
-            return
-        }
+        let authenticationType = sender.currentTitle!
         
-//        stackOverflowKeychain()
-        authenticateUser()
-    }
-    
-    func authenticateUser() {
-        let context = LAContext()
-        let reason = "Biometric Authntication testing !!"
-        //        var authError: NSError?
+        let result : String
         
-        if #available(iOS 8.0, macOS 10.12.1, *){
-            context.evaluatePolicy(LAPolicy.deviceOwnerAuthentication, localizedReason: reason) { (success, error) in
-                DispatchQueue.main.async {
-                    if success {
-                        self.resultLabel.text = "Success"
-                        print("Success")
-                    }else{
-                        self.resultLabel.text = "Failed"
-                        print("Failed")
-                        return
-                    }
-                }
-            }
-        }else{
-            print("This feature is not supported.")
-            self.resultLabel.text = "Not Supported"
-        }
-    }
-    
-    //    func startAuthentication() {
-    //        let contet = LAContext()
-    //        let reason = "Biometric Authntication testing !!"
-    //        var authError: NSError?
-    //        if #available(iOS 8.0, macOS 10.12.1, *) {
-    //            if contet.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
-    //                contet.localizedCancelTitle = "Cancel"
-    //                contet.localizedFallbackTitle = ""
-    //                contet.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, evaluateError in
-    //                    DispatchQueue.main.async {
-    //                        if success {
-    //                            let alert = UIAlertController(title: "Success", message: "Successfully Authenticated", preferredStyle: .alert)
-    //                            alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-    //                            self.present(alert, animated: true, completion: nil)
-    //                        } else {
-    //                            // User did not authenticate successfully, look at error and take appropriate action
-    //                            print(evaluateError?.localizedDescription)
-    //                        }
-    //                    }
-    //                }
-    //            } else {
-    //                // Could not evaluate policy; look at authError and present an appropriate message to user
-    //                print("Sorry!!.. Could not evaluate policy.\(authError?.localizedDescription)")
-    //            }
-    //        } else {
-    //            print("This feature is not supported.")
-    //        }
-    //    }
-    
-    func createKeyChainItem() -> Bool {
-        
-        let stringData = "String Data"
-        
-        let theData = stringData.data(using: .utf8)
-        
-        let accessControl = SecAccessControlCreateWithFlags(kCFAllocatorDefault, kSecAttrAccessibleAlways, .devicePasscode, nil)
-        
-        let query = [
-            kSecClass as String : kSecClassGenericPassword as String,
-            kSecAttrAccessControl as String : accessControl,
-            kSecAttrAccount as String : "myAccount",
-            kSecAttrService as String : "myService",
-            kSecValueData as String : theData!
-        ] as [String: Any]
-        
-        let status = SecItemAdd(query as CFDictionary, nil)
-        
-        if status == noErr || status == errSecDuplicateItem {
-            print("successfully added passcode-protected item to keychain")
-        }
-        return status == noErr || status == errSecDuplicateItem
-    }
-    
-    func authenticateUsingPasscode() -> Bool {
-        var success = createKeyChainItem()
-        if success {
-            print("====================")
-            print("Inside if Success ")
-            print(String(success))
-            print("====================")
+        if authenticationType == "Passcode" {
+            result = String(passcodeAuthentication())
+            self.resultLabel.text = "Passcode Authentication result \(result)"
             
-            var dataTypeRef:AnyObject?
-            let retrieveQuery = [
-                kSecClass as String : kSecClassGenericPassword as String,
-                kSecAttrAccount as String : "myAccount",
-                kSecAttrService as String : "myService",
-                kSecReturnData as String : kCFBooleanTrue,
-                kSecMatchLimit as String : kSecMatchLimitOne
-            ] as [String: Any]
-            let status = SecItemCopyMatching(retrieveQuery as CFDictionary, nil)
-            success = (status != noErr)
-            if status == errSecUserCanceled {
-                print("user canceled authentication")
-            }
-            print(String(success))
-            return success
+        } else if authenticationType == "Biometric" {
+//            result = String(biometricAuthentication())
+//            self.resultLabel.text = "Biometric Authentication result \(result)"
+            self.resultLabel.text = "분석 중입니다."
+            
+        } else {
+            self.resultLabel.text = "Unknown Button"
         }
-        return success
     }
     
-    func stackOverflowKeychain()->Bool {
+    // Passcode Authentication
+    func passcodeAuthentication() -> Bool {
+        let reason = "Input your passcode to authenticate"
+        
         let secAccessControlbject: SecAccessControl = SecAccessControlCreateWithFlags(
             kCFAllocatorDefault,
-            kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
             .devicePasscode,
             nil
         )!
@@ -164,22 +65,57 @@ class ViewController: UIViewController {
         
         
         let query: NSDictionary = [
-                kSecClass:  kSecClassGenericPassword,
-                kSecAttrService  : "PasscodeAuthentication",
-                kSecUseOperationPrompt : "Sign in"
-            ]
-
-            var typeRef : CFTypeRef?
-
-            let status: OSStatus = SecItemCopyMatching(query, &typeRef) //This will prompt the passcode.
-
-            if (status == errSecSuccess)
-            {
-               return  true
-            }else{
-                return false
-            }
+            kSecClass:  kSecClassGenericPassword,
+            kSecAttrService  : "PasscodeAuthentication",
+            kSecUseOperationPrompt : reason
+        ]
+        
+        var typeRef : CFTypeRef?
+        
+        let status: OSStatus = SecItemCopyMatching(query, &typeRef) //This will prompt the passcode.
+        
+        // Check authentication status
+        if (status == errSecSuccess)
+        {
+            print("Authentication Succeeeded")
+            return  true
+        } else {
+            print("Authentication failed")
+            return false
+        }
     }
     
+//    // Biometric Authentication
+//    func biometricAuthentication() -> Bool {
+//
+//        let context = LAContext()
+//        let reason = "Biometric Authntication testing !!"
+//        //        var authError: NSError?
+//        //        var result : Bool = false
+//
+//        context.evaluatePolicy(LAPolicy.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { (success, error) in
+//
+//            DispatchQueue.main.async {
+//
+//
+//                if success {
+//
+//                    print("Success")
+//
+//                }else{
+//                    print("Failed")
+//                    return
+//                }
+//
+//            }
+//
+//        }
+//
+//        return true
+//    }
+    
+    
+    
+
 }
 
