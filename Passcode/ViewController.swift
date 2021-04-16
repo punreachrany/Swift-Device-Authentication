@@ -19,6 +19,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        _ = deviceHasPasscode()
+        
     }
     
     // Authentication Buttons Action Function
@@ -42,7 +45,7 @@ class ViewController: UIViewController {
             self.resultLabel.text = "Unknown Button"
         }
         
-//        print("Finish")
+        //        print("Finish")
     }
     
     // Passcode Authentication
@@ -66,6 +69,13 @@ class ViewController: UIViewController {
         ]
         
         let insertStatus = SecItemAdd(insertQuery as CFDictionary, nil)
+        //        print(insertStatus)
+        //        if insertStatus == 0 {
+        //            SecItemDelete(insertQuery)
+        //            print("Has passcode")
+        //        }else{
+        //            print("No Passcode")
+        //        }
         
         
         let query: NSDictionary = [
@@ -81,7 +91,7 @@ class ViewController: UIViewController {
         // Check authentication status
         if (status == errSecSuccess)
         {
-            print("Authentication Succeeeded")
+            print("Authentication Succeeded")
             return  true
         } else {
             print("Authentication failed")
@@ -127,6 +137,32 @@ class ViewController: UIViewController {
         self.authResult = result
         self.resultLabel.text = "Biometric Authentication result \(String(self.authResult))"
         
+    }
+    
+    func deviceHasPasscode() -> Bool {
+        let secret = "Device has passcode set?".data(using: String.Encoding.utf8, allowLossyConversion: false)
+
+        let attributes = [kSecClass as String:kSecClassGenericPassword, kSecAttrService as String:"LocalDeviceServices", kSecAttrAccount as String:"NoAccount", kSecValueData as String:secret!, kSecAttrAccessible as String:kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly] as [String : Any]
+
+        let status = SecItemAdd(attributes as CFDictionary, nil)
+        print(status)
+        if status == 0 {
+            SecItemDelete(attributes as CFDictionary)
+            print("Has passcode")
+            return true
+        }
+        print("No Passcode")
+        return false
+        
+//        let myContext = LAContext()
+//        var authError: NSError? = nil
+//        if (myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &authError)){
+//            print("Has passcode")
+//            return true
+//        }else{
+//            print("No Passcode")
+//            return false
+//        }
     }
     
 }
