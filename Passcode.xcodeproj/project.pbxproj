@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8C625539262D15E30064C633 /* Passcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C625538262D15E30064C633 /* Passcode.swift */; };
 		8C7B79C02626D0DF00B94683 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7B79BF2626D0DF00B94683 /* AppDelegate.swift */; };
 		8C7B79C22626D0DF00B94683 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7B79C12626D0DF00B94683 /* SceneDelegate.swift */; };
 		8C7B79C42626D0DF00B94683 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7B79C32626D0DF00B94683 /* ViewController.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8C625538262D15E30064C633 /* Passcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Passcode.swift; sourceTree = "<group>"; };
 		8C7B79BC2626D0DF00B94683 /* Passcode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Passcode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C7B79BF2626D0DF00B94683 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8C7B79C12626D0DF00B94683 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -37,6 +39,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8C62553B262D15EE0064C633 /* Modal */ = {
+			isa = PBXGroup;
+			children = (
+				8C625538262D15E30064C633 /* Passcode.swift */,
+			);
+			path = Modal;
+			sourceTree = "<group>";
+		};
+		8C62553D262D15F90064C633 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				8C7B79C32626D0DF00B94683 /* ViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		8C625540262D16080064C633 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				8C7B79C52626D0DF00B94683 /* Main.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		8C7B79B32626D0DF00B94683 = {
 			isa = PBXGroup;
 			children = (
@@ -58,8 +84,9 @@
 			children = (
 				8C7B79BF2626D0DF00B94683 /* AppDelegate.swift */,
 				8C7B79C12626D0DF00B94683 /* SceneDelegate.swift */,
-				8C7B79C32626D0DF00B94683 /* ViewController.swift */,
-				8C7B79C52626D0DF00B94683 /* Main.storyboard */,
+				8C62553B262D15EE0064C633 /* Modal */,
+				8C625540262D16080064C633 /* View */,
+				8C62553D262D15F90064C633 /* Controller */,
 				8C7B79C82626D0E100B94683 /* Assets.xcassets */,
 				8C7B79CA2626D0E100B94683 /* LaunchScreen.storyboard */,
 				8C7B79CD2626D0E100B94683 /* Info.plist */,
@@ -140,6 +167,7 @@
 				8C7B79C42626D0DF00B94683 /* ViewController.swift in Sources */,
 				8C7B79C02626D0DF00B94683 /* AppDelegate.swift in Sources */,
 				8C7B79C22626D0DF00B94683 /* SceneDelegate.swift in Sources */,
+				8C625539262D15E30064C633 /* Passcode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
